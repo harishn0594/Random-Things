@@ -1,0 +1,53 @@
+import numpy as np
+import pandas
+import random
+# import matplotlib as plt
+from matplotlib import pyplot as plt
+
+xlim = [-5, 5]
+ylim = [-5, 5]
+
+# Square area limits
+xslim = [-4, -2]
+yslim = [2, 4]
+
+# Circle area limits
+center = [2, 2]
+radius = 2
+
+square_count = 0
+circle_count = 0
+
+ntrials = range(200, 20000, 400)
+pis = []
+points = []
+
+
+def find_incircle(a, b, centerp, radius):
+    dist_from_center = np.sqrt((centerp[0] - a) ** 2 + (centerp[1] - b) ** 2)
+    if dist_from_center < radius:
+        return True
+
+
+for j in ntrials:
+    for i in range(j):
+
+        random_point = [random.uniform(xlim[0], xlim[1]).__round__(2), random.uniform(ylim[0], ylim[1]).__round__(2)]
+
+        points.append(random_point)
+        incircle = find_incircle(random_point[0], random_point[1], center, radius)
+
+        if (xslim[0] < random_point[0] < xslim[1]) and (yslim[0] < random_point[1] < yslim[1]):
+            square_count += 1
+        if incircle:
+            circle_count += 1
+
+    pi = circle_count/square_count
+    pis.append(pi)
+
+plt.plot(ntrials, pis, '-o')
+plt.plot(ntrials, np.ones(len(ntrials)) * np.pi)
+plt.xlabel("Trials")
+plt.ylabel("Value of pi")
+plt.show()
+
