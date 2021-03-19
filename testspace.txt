@@ -38,6 +38,13 @@ border-width: 20px;
 font-family: Calibri;
 background-color: #FFD700;
 }
+
+#gohome:hover{
+border-radius: 80px;
+width: 160px;
+height: 160px;
+
+}
 </style>
 
 <head>
