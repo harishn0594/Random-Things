@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+
+html,body{
+background: rgb(2,1,18);
+background: linear-gradient(54deg, rgba(2,1,18,1) 0%, rgba(5,10,50,1) 79%, rgba(2,4,36,1) 100%);
+background-position: center center;
+background-size: 100%;
+height: 100%;
+
+}
+
+
+hr{
+height:5px;
+width: 100%;
+margin-left: 0px;
+margin-right: 0px;
+border-color: #A52A2A;
+background-color: #A52A2A;
+opacity: 50%;
+}
+
+h1,p, marquee{
+color: #FFFFFF;
+font-family: Calibri, 'Times New Roman';
+}
+
+#gohome{
+border-radius: 60px;
+width: 120px;
+height: 120px;
+margin-left: 45%;
+margin-top: 225px;
+border-width: 20px;
+font-family: Calibri;
+background-color: #FFD700;
+}
+</style>
+
+<head>
+<h1>Intergalactic Space</h1>
+<p>Explore the unbounded... Fly through the ether...</p>
+<hr class="line"></hr>
+</head>
+
+<marquee>Explore the vastness of the universe.. Travel with the Voyager... Roam around on the Perseverance...</marquee>
+<hr class="line"></hr>
+<button id='gohome'>Click Here to Explore</button>
+</body>
+	
+
+<script>
+
+var x = document.getElementById("gohome");
+x.addEventListener("click",function func(){
+alert("Thanks for clicking here!!");
+}
+);
+
+
+</script>
+</html>
