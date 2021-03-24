@@ -1,0 +1,68 @@
+# Online Python compiler (interpreter) to run Python online.
+# Write Python 3 code in this online editor and run it.
+# Get started with interactive Python!
+# Supports Python Modules: builtins, math,pandas, scipy 
+# matplotlib.pyplot, numpy, operator, processing, pygal, random, 
+# re, string, time, turtle, urllib.request
+import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
+import pandas as pd
+import numpy as np
+import scipy as sp
+
+import math
+
+
+
+d = np.array([[1,5],[2, 7],[4,11],[8, 19]])
+x = d[:, 0]
+y_act = d[:, 1]
+
+
+def pdf_custom(x, m, s=0.5):
+    pd = (1/np.sqrt(2*np.pi) * np.exp(-((x-m)/(2*s**2))))
+    return pd
+
+def likelihood(y_actual, y_est):
+    return pdf_custom(y_est, y_actual)
+    
+
+def posterior(y_actual, y_est, prior):
+    return np.product(likelihood(y_actual, y_est)) * prior 
+    
+    
+prior_a = range(1,7)
+prior_b = range(1, 6)
+
+prior = 0.2
+
+posteriormat = np.zeros((len(prior_a), len(prior_b)))
+print(posteriormat)
+for a_ind, a_val in enumerate(prior_a):
+    for b_ind, b_val in enumerate(prior_b):
+        print(a_val, b_val)
+        y_est = a_val*x + b_val
+        posteriormat[a_ind, b_ind] = posterior(y_est, y_act, prior)
+
+posteriormat /= np.sum(posteriormat)
+print(posteriormat)
+B, A = np.meshgrid(prior_b, prior_a)
+
+# fig = plt.figure()
+# ax = plt.axes(projection='3d')
+# ax.contour3D(A, B, posteriormat, 50)
+plt.contourf(A, B, posteriormat)
+plt.colorbar()
+
+plt.xlabel('A values')
+plt.ylabel('B values')
+plt.show()
+
+maxA = np.max(posteriormat)
+print("Maximum posterior")
+print(maxA)
+optA = A[np.where(posteriormat == maxA)]
+optB = B[np.where(posteriormat == maxA)]
+print("Optimum values of A and B")
+print(optA)
+print(optB)
