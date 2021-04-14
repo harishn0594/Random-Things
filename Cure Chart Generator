@@ -1,0 +1,133 @@
+
+Private Sub CommandButton21_Click()
+
+'heatrate --> rate of heating, assumed to be the same for all heating zones
+'coolrate --> rate of cooling, assumed to be the same for all cooling zones
+'ndwells --> number of dwell zones in the cure chart to be input by the user
+'dwelltemps --> temperatures in the dwell periods
+'dwelltimes --> times in hours to be input by the user of each dwell zone
+'roomtemp --> room temperature at which the tool/part is assumed to be in the beginning of the cure cycle
+
+
+Dim heatrate As Double, coolrate As Double, ndwells As Integer, dwelltemps() As Double, dwelltimes() As Double, roomtemp As Double
+
+'--------------------------------------------------------------------------------------------------
+'Prompting the inputs from user
+heatrate = TextBox21.Value
+coolrate = TextBox22.Value
+ndwells = TextBox23.Value
+
+ReDim dwelltemps(ndwells - 1)
+ReDim dwelltimes(ndwells - 1)
+For i = 0 To (ndwells - 1)
+dwelltemps(i) = InputBox("Enter the dwell temperature", "Dwell temperature")
+dwelltimes(i) = InputBox("Enter the dwell time", "Dwell Time")
+Next
+
+roomtemp = TextBox24.Value
+
+'-----------------------------------------------------------------------------------------------------
+'Determination of the total cure time in minutes to set the size of the arrays.
+'Arrays defined: x --> time (minutes); y --> temperature (in deg celcius) ; other variables to be defined in the future
+
+worktemp = roomtemp
+Dim time As Double
+time = 0
+For i = 0 To (ndwells - 1)
+time = time + (dwelltemps(i) - worktemp) / (heatrate) + dwelltimes(i) * 60
+worktemp = dwelltemps(i)
+Next
+time = time + (dwelltemps(ndwells - 1) - roomtemp) / (coolrate)
+
+'-----------------------------------------------------------------------------------------------------
+'x --> Time in minutes
+'y --> Temp in deg celcius
+
+Dim x() As Double, y() As Double
+ReDim x(time + 3)
+ReDim y(time + 3)
+
+Dim dwell_index As Integer
+dwell_index = 0
+jj = 0
+
+'stoptime is the next breakpoint in time where there is a change in the curve
+Dim stoptime As Double
+
+ctemp = roomtemp
+Do While True
+
+'Heating Up
+deltahr = 1
+While ctemp <= dwelltemps(dwell_index)
+x(jj) = jj
+y(jj) = ctemp
+ctemp = ctemp + heatrate * deltahr
+jj = jj + 1
+Wend
+
+
+'Dwell stage
+stoptime = x(jj - 1) + dwelltimes(dwell_index) * 60
+While x(jj - 1) <= stoptime
+x(jj) = jj
+y(jj) = dwelltemps(dwell_index)
+jj = jj + 1
+Wend
+ctemp = dwelltemps(dwell_index)
+
+'If the context is the last dwell then cool down
+'Cooling down
+deltacr = -1
+If dwell_index = (ndwells - 1) Then
+While ctemp >= roomtemp
+x(jj) = jj
+ctemp = ctemp + coolrate * deltacr
+y(jj) = ctemp
+jj = jj + 1
+Wend
+Exit Do
+'If not last dwell then proceed to the next dwell in the cycle
+Else
+dwell_index = dwell_index + 1
+End If
+
+Loop
+
+'Populating the cells with the values of the times and the temp
+Cells(3, 12).EntireColumn.ColumnWidth = 15
+Cells(3, 13).EntireColumn.ColumnWidth = 15
+Cells(3, 14).EntireColumn.ColumnWidth = 15
+
+Cells(3, 12).Value = "TIME (IN MINS)"
+Cells(3, 13).Value = "TEMPERATURE (DEG C)"
+Cells(3, 14).Value = "ACTUAL(DEG C)"
+Range(Cells(4, 12), Cells(4 + UBound(x) - LBound(x), 12)).Value = Application.Transpose(x)
+Range(Cells(4, 13), Cells(4 + UBound(x) - LBound(x), 13)).Value = Application.Transpose(y)
+'Range("C20").Value = time
+
+
+'Plotting the obtained data
+Set plotrange = Range(Cells(4, 13), Cells(4 + UBound(x) - LBound(x) - 2, 13))
+Set plotrange1 = Range(Cells(4, 14), Cells(4 + UBound(x) - LBound(x) - 2, 14))
+
+If CheckBox21.Value = True Then
+
+Dim myChart As Chart
+Set myChart = Charts.Add
+
+With myChart
+
+.SetSourceData (plotrange)
+.ChartType = xlLine
+'.ChartTitle.Text = "Ideal Cure Chart"
+
+End With
+End If
+
+
+End Sub
+
+Private Sub CommandButton22_Click()
+Cells.Clear
+End Sub
