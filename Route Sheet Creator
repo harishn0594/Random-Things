@@ -1,0 +1,250 @@
+
+Private Sub ComboBox21_Change()
+    Dim a As Integer
+    a = ComboBox22.ListIndex
+    If ComboBox22.ListIndex = 0 Then
+        If ComboBox23.Value = "New Work" Then
+            ComboBox21.ListFillRange = "BFTT1!B7:B42"
+        End If
+    End If
+End Sub
+
+Private Sub ComboBox22_Change()
+    
+     
+End Sub
+
+Sub CommandButton21_Click()
+'
+' InsertOp Macro
+'
+' Keyboard Shortcut: Ctrl+o
+    Application.ScreenUpdating = False
+    Dim opNumber As Integer
+    Dim targetCell As Range
+    Dim processRow As Integer
+    Dim processCol As Integer
+    Set targetCell = ActiveCell
+    
+    
+    Dim partDesc As String, dwgNumber As String
+    partDesc = TextBox23.Value
+    dwgNumber = TextBox22.Value
+    
+    
+    opNumber = ComboBox21.ListIndex
+    If ComboBox22.Value = "NAL" Then
+        Sheets("NAL").Select
+        ActiveSheet.Range("B2:G11").Select
+        Selection.Copy
+        Sheets("MIS").Select
+        
+        
+        ActiveSheet.Paste
+        targetCell.Offset(3, 2).Value = partDesc
+        targetCell.Offset(3, 0).Value = drawingNumber
+        
+        processRow = opNumber + 7
+        processCol = 3
+        Sheets("BFTT1").Select
+        Sheets("BFTT1").Cells(processRow, processCol).Select
+        Selection.Copy
+        
+        'targetCell.Offset(11, 0).Rows("1:1").Select
+        'targetCell.Offset(11, 0).Rows("1:1").EntireRow.RowHeight = 123
+        'ActiveSheet.Paste
+        'targetCell.Offset(12, 0).Select
+        
+        Sheets("MIS").Select
+        targetCell.Offset(10, 0).Rows("1:1").Select
+        
+        targetCell.Offset(10, 0).Rows("1:1").EntireRow.RowHeight = 123
+        
+        ActiveSheet.Paste
+        Set opcell = targetCell.Offset(10, 0)
+        Range(opcell, opcell.Offset(0, 5)).Merge
+        opcell.Select
+        
+        With Selection
+            .wraptext = True
+            .HorizontalAlignment = xlLeft
+            .VerticalAlignment = xlCenter
+            .Font.Size = 16
+        End With
+        opcell.Offset(1, 0).Select
+        
+    End If
+    
+    If ComboBox22.Value = "BFTT" Then
+        If Label21.Caption = Chr(168) Then
+        
+            'opNumber = ComboBox21.ListIndex
+            If ComboBox21.ListIndex = (ComboBox21.ListCount - 1) Then
+                Sheets("Templates").Select
+                Sheets("Templates").Range("B24:G35").Select
+                Selection.Copy
+                Sheets("MIS").Select
+                ActiveSheet.Paste
+            Else
+                
+                Sheets("Templates").Select
+                Sheets("Templates").Range("B3:G4").Select
+                Selection.Copy
+                Sheets("MIS").Select
+                targetCell.Select
+                ActiveSheet.Paste
+                
+                
+                processRow = opNumber + 7
+                processCol = 3
+                Sheets("BFTT1").Select
+                Sheets("BFTT1").Cells(processRow, processCol).Select
+                Selection.Copy
+                Sheets("MIS").Select
+                targetCell.Offset(1, 0).Rows("1:1").Select
+                ActiveSheet.Paste
+                targetCell.Offset(2, 0).Select
+                
+            End If
+                
+            
+        End If
+        If Label21.Caption = Chr(254) Then
+            opNumber = ComboBox21.ListIndex
+            Sheets("Templates").Select
+            Sheets("Templates").Range("B10:G21").Select
+            Selection.Copy
+            Sheets("MIS").Select
+            targetCell.Select
+            ActiveSheet.Paste
+            
+            
+            processRow = opNumber + 7
+            processCol = 3
+            If ComboBox22.ListIndex = 0 Then
+                Sheets("BFTT1").Select
+                Sheets("BFTT1").Cells(processRow, processCol).Select
+                Selection.Copy
+            End If
+            Sheets("MIS").Select
+            targetCell.Offset(11, 0).Rows("1:1").Select
+            targetCell.Offset(11, 0).Rows("1:1").EntireRow.RowHeight = 123
+            ActiveSheet.Paste
+            targetCell.Offset(12, 0).Select
+            
+        End If
+    End If
+    
+    If TextBox21.Value < 100 Then
+        targetCell.Offset(0, 1).FormulaR1C1 = "'00" & TextBox21.Value
+    End If
+    If TextBox21.Value >= 100 Then
+        targetCell.Offset(0, 1).FormulaR1C1 = "'0" & TextBox21.Value
+    End If
+    
+    TextBox21.Value = TextBox21.Value + 10
+    
+    'new update
+    If ComboBox21.ListIndex < (ComboBox21.ListCount - 1) Then
+        ComboBox21.ListIndex = ComboBox21.ListIndex + 1
+    End If
+    'new update 30.03.2021 ends
+    Application.ScreenUpdating = True
+End Sub
+
+Private Sub CommandButton22_Click()
+    TextBox21.Value = TextBox21.Value + 10
+End Sub
+
+Private Sub CommandButton23_Click()
+    TextBox21.Value = TextBox21.Value - 10
+End Sub
+
+Private Sub CommandButton24_Click()
+    ActiveSheet.Range("B1").FormulaR1C1 = ":" & tb_on.Value
+    ActiveSheet.Range("B2").FormulaR1C1 = ":" & tb_son.Value
+    ActiveSheet.Range("B3").FormulaR1C1 = ":" & tb_misn.Value
+    ActiveSheet.Range("B4").FormulaR1C1 = ":" & tb_pd.Value
+End Sub
+
+Private Sub CommandButton25_Click()
+    Application.ScreenUpdating = False
+    
+    'Sheets("BFTT_NW").Range("A8:F184").Copy
+    If ComboBox22.ListIndex = 0 Then
+        Sheets("BFTT_NW").Select
+        Sheets("BFTT_NW").Range("A8:F184").Select
+        Selection.Copy
+        Sheets("MIS").Select
+        ActiveSheet.Paste
+    End If
+    Application.ScreenUpdating = True
+    
+End Sub
+
+Private Sub CommandButton26_Click()
+    Application.ScreenUpdating = False
+    Dim c As String
+    While IsEmpty(ActiveCell) = False
+        c = ActiveCell.Offset(0, 1).Value
+        If InStr(1, c, "OPERATOR") Then
+            ActiveCell.EntireRow.RowHeight = 123
+        End If
+        ActiveCell.Offset(1, 0).Select
+    Wend
+    Application.ScreenUpdating = True
+End Sub
+
+Private Sub CommandButton27_Click()
+    If ComboBox21.ListIndex > 0 Then
+        ComboBox21.ListIndex = ComboBox21.ListIndex - 1
+    End If
+End Sub
+
+Private Sub CommandButton28_Click()
+    If ComboBox21.ListIndex < (ComboBox21.ListCount - 1) Then
+        ComboBox21.ListIndex = ComboBox21.ListIndex + 1
+    End If
+End Sub
+
+Private Sub CommandButton29_Click()
+    
+    Range("A1:J11").Value = ""
+    Range("A1:J11").UnMerge
+    Application.ScreenUpdating = False
+    
+    If ComboBox22.Value = "BFTT" Then
+        Sheets("Templates").Select
+        ActiveSheet.Range("B40:B44").Select
+        Selection.Copy
+        Sheets("MIS").Select
+        
+        Range("A2").Select
+        ActiveSheet.Paste
+        
+        Cells(6, 1).EntireRow.RowHeight = 162
+        
+        
+        
+    ElseIf ComboBox22.Value = "NAL" Then
+        
+        Sheets("Templates").Select
+        ActiveSheet.Range("B47:E47").Select
+        Selection.Copy
+        Sheets("MIS").Select
+        
+        Range("B1").Select
+        ActiveSheet.Paste
+    
+    End If
+    
+End Sub
+
+Private Sub Label21_Click()
+    If Label21.Caption = Chr(254) Then
+        Label21.Caption = Chr(168)
+    Else
+        Label21.Caption = Chr(254)
+    End If
+End Sub
+
